@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  NewExpense({super.key, required this.onAddExpense});
+
+  void Function(Expense expense) onAddExpense;
 
   @override
   State<StatefulWidget> createState() {
@@ -56,8 +58,19 @@ class _NewExpenseState extends State<NewExpense> {
         ),
       );
       return;
-    } 
-    
+    }
+    addNewExpense(enteredAmount);
+  }
+
+  void addNewExpense(double enteredAmount) {
+    var newExpense = Expense(
+        title: _titleController.text,
+        amount: enteredAmount,
+        category: _selectedCategory,
+        date: _selectedDate!);
+
+    widget.onAddExpense(newExpense);
+    Navigator.pop(context);
   }
 
   @override
@@ -70,7 +83,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16,48,16,16),
       child: Column(
         children: [
           TextField(
