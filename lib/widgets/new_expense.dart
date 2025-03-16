@@ -1,6 +1,8 @@
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/model/expense.dart';
+import 'package:expense_tracker/widgets/adapters/FirestoreAdapter.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,8 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
+  final _firestoreAdapter = FirestoreAdapter();
+
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
@@ -62,12 +66,14 @@ class _NewExpenseState extends State<NewExpense> {
     addNewExpense(enteredAmount);
   }
 
-  void addNewExpense(double enteredAmount) {
+  void addNewExpense(double enteredAmount) async {
     var newExpense = Expense(
         title: _titleController.text,
         amount: enteredAmount,
         category: _selectedCategory,
         date: _selectedDate!);
+
+    await _firestoreAdapter.addExpenseToFirestore(newExpense);
 
     widget.onAddExpense(newExpense);
     Navigator.pop(context);
@@ -83,7 +89,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16,48,16,16),
+      padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
           TextField(

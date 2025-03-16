@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/model/expense.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_item.dart';
 import 'package:flutter/material.dart';

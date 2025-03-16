@@ -1,4 +1,6 @@
+import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/widgets/expenses.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 var kColorScheme =
@@ -9,7 +11,11 @@ var kDarkColorScheme = ColorScheme.fromSeed(
   seedColor: Color.fromARGB(255, 5, 99, 125),
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MaterialApp(
       darkTheme: ThemeData.dark().copyWith(
@@ -62,5 +68,11 @@ void main() {
       ),
       home: Expenses(),
     ),
+  );
+}
+
+void initializeFirebase() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 }

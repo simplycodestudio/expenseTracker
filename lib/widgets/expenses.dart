@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracker/widgets/adapters/FirestoreAdapter.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/model/expense.dart';
@@ -14,20 +16,21 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  final List<Expense> _registeredExpenses = [
-    Expense(
-      title: 'Fluter Course',
-      amount: 19.99,
-      date: DateTime.now(),
-      category: Category.WORK,
-    ),
-    Expense(
-      title: 'Cinema',
-      amount: 15.69,
-      date: DateTime.now(),
-      category: Category.LEISURE,
-    ),
-  ];
+  List<Expense> _registeredExpenses = [];
+  final _firestoreAdapter = FirestoreAdapter();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses();
+  }
+
+  Future<void> _loadExpenses() async {
+    final expenses = await _firestoreAdapter.getExpensesFromFirestore();
+    setState(() {
+      _registeredExpenses = expenses;
+    });
+  }
 
   void _addExpense(Expense expense) {
     setState(() {
@@ -35,8 +38,9 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
-  void _removeExpense(Expense expense) {
+  void _removeExpense(Expense expense) async {
     final expenseIndex = _registeredExpenses.indexOf(expense);
+    await _firestoreAdapter.removeExpenseFromFirestore(expense);
 
     setState(() {
       _registeredExpenses.remove(expense);
@@ -56,6 +60,8 @@ class _ExpensesState extends State<Expenses> {
       ),
     );
   }
+
+  
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
